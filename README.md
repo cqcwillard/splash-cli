@@ -15,23 +15,28 @@ Set your wallpaper with beautiful photos from [unsplash](http://unsplash.com)
 > Got the same setup [here](http://github.com/Rawnly/dot-files)
 
 
+
 ## Installation
 
 To install `splash-cli` you must use **npm** (as always) and do the following:
 
 ```bash
-	$ npm i -g splash-cli
+	$ [sudo] npm i -g splash-cli
 ```
+
 
 ## Usage
 ![](https://cloud.githubusercontent.com/assets/11269635/21428079/7b24cc80-c858-11e6-8dc3-2e164d23804a.gif)
-> All the photos are stored in the module directory
+> All the photos are stored in `/Users/<username>/Pictures/splash_photos`
 
 ```bash
 	$ splash
     # Start download random photo
     # and set it as wallpaper
 ```
+
+## Compatibility
+I've tested it on **macOS 10.12.2** and **windows 10**. Unfortunatley I actually can't test it on **Linux** systems but should works fine. For any issues please report it, I'll try to fix them all.
 
 ## Options
 - <h3> SAVE </h3>
