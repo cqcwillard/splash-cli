@@ -35,7 +35,8 @@ var spinner = new ora({
 var photo, photo_url, creator, file, photo_name, pth, join, pic_dir;
 
 join = path.join;
-pic_dir = join(home, 'Pictures', 'splash_photos/' );
+//join(os.homedir(), 'Pictures', 'splash_photos/' );
+pic_dir = fs.readFileSync( join(__dirname, 'prefs.splash'), 'utf-8' );
 pth = join(__dirname, 'data.json');
 
 program.version(pkg.version)
@@ -45,6 +46,8 @@ program.version(pkg.version)
 .option('-i --info', 'display main photos infos.')
 .option('-s --save [path]', 'Save the image to a local path')
 .option('--id <id>', 'get photo from the id.')
+.option('--set', 'Optional for --save (required --save), set the saved photo as wallpaper')
+.option('--dir <path>', 'Set the default "splash_photos" directory')
 .option('--export', 'export a photo list')
 .option('--check', 'check for updates.');
 
@@ -59,7 +62,28 @@ checkInternet(function (isOnline) {
 	if (isOnline) {
 		spinner.stop();
 		spinner.text = 'Connecting to Unsplash';
-		if (program.save) {
+		if (program.dir) {
+			fs.exists(join(__dirname, 'prefs.splash'), (exists) => {
+				if (exists) {
+					// fs.unlink( join(__dirname, 'prefs.splash') );
+					fs.writeFile(join(__dirname, 'prefs.splash'), program.dir, (err) => {
+						if (!err) {
+							console.log(`${program.dir} is the new store directory`);
+						} else {
+							throw err;
+						}
+					});
+				} else {
+					fs.writeFile(join(__dirname, 'prefs'), program.dir, (err) => {
+						if (!err) {
+							console.log(`Changed from ${pic_dir} to ${program.dir}`);
+						} else {
+							throw err;
+						}
+					});
+				}
+			});
+		} else if (program.save) {
 			spinner.start();
 			request(api_url, function(error, response, body) {
 				if (!error && response.statusCode == 200) {
@@ -312,6 +336,10 @@ function down_load(filename, url) {
 	https.get(url, function(response) {
 		response.pipe(file).on('finish', () => {
 			spinner.succeed();
+
+			if (program.set) {
+				wallpaper.set(filename);
+			}
 
 			if ( program.info ) {
 				console.log('');
